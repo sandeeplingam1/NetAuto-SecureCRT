@@ -1,4 +1,4 @@
-import { Plus, SplitSquareHorizontal, LayoutGrid, Bot } from 'lucide-react'
+import { Plus, SplitSquareHorizontal, LayoutGrid } from 'lucide-react'
 import { useStore } from '../../store/appStore'
 import './TabBar.css'
 
@@ -28,7 +28,7 @@ export default function TabBar() {
           </div>
         ))}
 
-        <button className="new-tab" onClick={() => addTab()} title="New Tab (⌘T)">
+        <button className="new-tab" onClick={() => addTab()} data-tooltip="New Tab (⌘T)">
           <Plus size={13} strokeWidth={2} />
         </button>
       </div>
@@ -37,16 +37,15 @@ export default function TabBar() {
         <button
           className={`ai-btn ${showAISidebar ? 'active' : ''}`}
           onClick={toggleAISidebar}
-          title="Toggle AI Sidebar"
+          data-tooltip-right="Toggle AI Sidebar"
         >
-          <Bot size={13} strokeWidth={1.75} />
           <span>AI</span>
         </button>
         <div className="tabbar-sep" />
-        <button className="tool-btn" title="Split View">
+        <button className="tool-btn" data-tooltip-right="Split View">
           <SplitSquareHorizontal size={14} strokeWidth={1.75} />
         </button>
-        <button className="tool-btn" title="Tile Sessions">
+        <button className="tool-btn" data-tooltip-right="Tile Sessions">
           <LayoutGrid size={14} strokeWidth={1.75} />
         </button>
       </div>
