@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "AI-powered network terminal for network engineers",
   "main": "electron/main.js",
-  "author": "Helix",
+  "author": "Sandeep Lingam",
   "license": "MIT",
   "scripts": {
     "dev:vite": "vite",
@@ -26,6 +26,7 @@
     },
     "win": {
       "target": "nsis",
+      "publisherName": "Sandeep Lingam",
       "artifactName": "${productName}-${version}-Windows.${ext}"
     },
     "nsis": {
