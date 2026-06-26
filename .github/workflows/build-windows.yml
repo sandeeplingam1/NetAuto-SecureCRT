@@ -23,7 +23,8 @@ jobs:
       run: npm install
 
     - name: Remove problematic optional C++ module (cpu-features)
-      run: npm uninstall cpu-features
+      shell: bash
+      run: rm -rf node_modules/cpu-features node_modules/ssh2/node_modules/cpu-features
 
     - name: Build Windows executable
       run: npm run build -- --win
