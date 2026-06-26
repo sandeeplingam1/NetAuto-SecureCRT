@@ -18,9 +18,20 @@ export interface PortForward {
   remoteHost: string; remotePort: number; active: boolean
 }
 
+export interface Credential {
+  id: string
+  name: string
+  username: string
+  authMethod: AuthMethod
+  password?: string
+  privateKey?: string
+  passphrase?: string
+}
+
 export interface Session {
   id: string; name: string; host: string; port: number
   username: string; protocol: Protocol; authMethod: AuthMethod
+  credentialId?: string
   password?: string; privateKey?: string; passphrase?: string
   group: string; env: EnvTag; lastConnected?: number
   color?: string; notes?: string
@@ -117,6 +128,12 @@ export interface AppState {
   addPortForward:    (pf: Omit<PortForward, 'id'>) => void
   removePortForward: (id: string) => void
   updatePortForward: (id: string, u: Partial<PortForward>) => void
+
+  // Credentials
+  credentials: Credential[]
+  addCredential:    (c: Omit<Credential, 'id'>) => void
+  updateCredential: (id: string, u: Partial<Credential>) => void
+  deleteCredential: (id: string) => void
 
   // Macros
   macros: Macro[]
@@ -243,6 +260,24 @@ export const useStore = create<AppState>((set, get) => ({
     return { sessions }
   }),
 
+  // Credentials
+  credentials: [],
+  addCredential: (c) => set(st => {
+    const credentials = [...st.credentials, { ...c, id: crypto.randomUUID() }]
+    persist('credentials', credentials); return { credentials }
+  }),
+  updateCredential: (id, u) => set(st => {
+    const credentials = st.credentials.map(c => c.id === id ? { ...c, ...u } : c)
+    persist('credentials', credentials); return { credentials }
+  }),
+  deleteCredential: (id) => set(st => {
+    const credentials = st.credentials.filter(c => c.id !== id)
+    const sessions = st.sessions.map(s => s.credentialId === id ? { ...s, credentialId: undefined } : s)
+    persist('credentials', credentials)
+    persist('sessions', sessions)
+    return { credentials, sessions }
+  }),
+
   // Tabs
   tabs: [], activeTabId: null,
   splitLayout: 'single', broadcastMode: false,
@@ -353,12 +388,13 @@ function persist(key: string, value: any) {
 // ── Hydrate from store on boot ─────────────────────────────────────────────────
 async function hydrate() {
   try {
-    const [sessions, aiSettings, termSettings, macros, highlights] = await Promise.all([
+    const [sessions, aiSettings, termSettings, macros, highlights, credentials] = await Promise.all([
       loadFromStore<Session[]>('sessions', []),
       loadFromStore<Partial<AISettings>>('aiSettings', {}),
       loadFromStore<Partial<TermSettings>>('termSettings', {}),
       loadFromStore<Macro[]>('macros', []),
       loadFromStore<HighlightRule[]>('highlights', []),
+      loadFromStore<Credential[]>('credentials', []),
     ])
     useStore.setState(st => ({
       sessions:     sessions.length > 0 ? sessions : st.sessions,
@@ -366,6 +402,7 @@ async function hydrate() {
       termSettings: { ...st.termSettings, ...termSettings },
       macros:       macros.length > 0 ? macros : st.macros,
       highlights:   highlights.length > 0 ? highlights : st.highlights,
+      credentials:  credentials.length > 0 ? credentials : st.credentials,
     }))
   } catch (e) {
     console.warn('Hydration skipped:', e)

@@ -23,7 +23,7 @@ const PORT_DEFAULTS: Record<Protocol, number> = { SSH: 22, Telnet: 23, Serial: 0
 const BAUD_RATES = [300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400]
 
 export default function SessionModal() {
-  const { editingSession, setEditingSession, setShowNewSessionModal, addSession, updateSession } = useStore()
+  const { credentials, editingSession, setEditingSession, setShowNewSessionModal, addSession, updateSession } = useStore()
   const api = (window as any).helixAPI
 
   const isEdit = !!editingSession
@@ -198,7 +198,7 @@ export default function SessionModal() {
               </div>
             )}
 
-            {(isSSH || isTelnet) && (
+            {(isSSH || isTelnet) && !form.credentialId && (
               <div className="form-row">
                 <div className="form-field">
                   <label>Username</label>
@@ -213,61 +213,92 @@ export default function SessionModal() {
           {isSSH && (
             <div className="form-section">
               <div className="form-section-title">Authentication</div>
+              
               <div className="form-row">
                 <div className="form-field">
-                  <div className="auth-toggle">
-                    {(['password', 'key', 'agent'] as AuthMethod[]).map(m => (
-                      <button key={m} className={`auth-btn ${form.authMethod === m ? 'active' : ''}`}
-                        onClick={() => set('authMethod', m)}>
-                        {m === 'password' ? 'Password' : m === 'key' ? 'Key File' : 'SSH Agent'}
-                      </button>
+                  <label>Credential Source</label>
+                  <select value={form.credentialId || ''} onChange={e => {
+                    const id = e.target.value
+                    set('credentialId', id === '' ? undefined : id)
+                  }}>
+                    <option value="">Custom (Per Session)</option>
+                    {credentials.map(c => (
+                      <option key={c.id} value={c.id}>{c.name} ({c.username})</option>
                     ))}
-                  </div>
+                  </select>
                 </div>
               </div>
 
-              {form.authMethod === 'password' && (
-                <div className="form-row">
-                  <div className="form-field">
-                    <label>Password</label>
-                    <div className="input-with-btn">
-                      <input type={showPass ? 'text' : 'password'}
-                        placeholder="Leave empty to prompt on connect"
-                        value={form.password} onChange={e => set('password', e.target.value)} />
-                      <button className="input-btn" onClick={() => setShowPass(s => !s)}>
-                        {showPass ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {form.authMethod === 'key' && (
+              {!form.credentialId ? (
                 <>
                   <div className="form-row">
                     <div className="form-field">
-                      <label>Private Key Path</label>
-                      <div className="input-with-btn">
-                        <input placeholder="~/.ssh/id_rsa" value={form.privateKey}
-                          onChange={e => set('privateKey', e.target.value)} className="font-mono" />
-                        <button className="input-btn icon-only" onClick={pickKeyFile} title="Browse">
-                          <FolderOpen size={13} />
-                        </button>
+                      <div className="auth-toggle">
+                        {(['password', 'key', 'agent'] as AuthMethod[]).map(m => (
+                          <button key={m} className={`auth-btn ${form.authMethod === m ? 'active' : ''}`}
+                            onClick={() => set('authMethod', m)}>
+                            {m === 'password' ? 'Password' : m === 'key' ? 'Key File' : 'SSH Agent'}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label>Passphrase (if key is encrypted)</label>
-                      <input type="password" placeholder="Leave empty if not protected"
-                        value={form.passphrase} onChange={e => set('passphrase', e.target.value)} />
+
+                  {form.authMethod === 'password' && (
+                    <div className="form-row">
+                      <div className="form-field">
+                        <label>Password</label>
+                        <div className="input-with-btn">
+                          <input type={showPass ? 'text' : 'password'}
+                            placeholder="Leave empty to prompt on connect"
+                            value={form.password} onChange={e => set('password', e.target.value)} />
+                          <button className="input-btn" onClick={() => setShowPass(s => !s)}>
+                            {showPass ? 'Hide' : 'Show'}
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {form.authMethod === 'key' && (
+                    <>
+                      <div className="form-row">
+                        <div className="form-field">
+                          <label>Private Key Path</label>
+                          <div className="input-with-btn">
+                            <input value={form.privateKey} onChange={e => set('privateKey', e.target.value)}
+                              placeholder="/Users/name/.ssh/id_rsa" />
+                            <button className="input-btn" onClick={async () => {
+                              const res = await api?.openFile({ title: 'Select Private Key' })
+                              if (!res.cancelled && res.filePaths.length) set('privateKey', res.filePaths[0])
+                            }}>Browse</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-field">
+                          <label>Passphrase (Optional)</label>
+                          <div className="input-with-btn">
+                            <input type={showPass ? 'text' : 'password'}
+                              value={form.passphrase} onChange={e => set('passphrase', e.target.value)} />
+                            <button className="input-btn" onClick={() => setShowPass(s => !s)}>
+                              {showPass ? 'Hide' : 'Show'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {form.authMethod === 'agent' && (
+                    <div className="form-note">
+                      Using SSH agent — make sure your key is added via <code>ssh-add</code>
+                    </div>
+                  )}
                 </>
-              )}
-              {form.authMethod === 'agent' && (
-                <div className="form-note">
-                  Using SSH agent — make sure your key is added via <code>ssh-add</code>
+              ) : (
+                <div className="settings-desc" style={{ marginTop: 8, padding: 12, background: 'var(--bg-active)', borderRadius: 'var(--radius-sm)' }}>
+                  <Lock size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
+                  Authentication is managed by the Global Credential Vault.
                 </div>
               )}
             </div>

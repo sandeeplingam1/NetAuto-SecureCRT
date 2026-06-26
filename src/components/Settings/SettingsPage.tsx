@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Bot, Terminal, Shield, Keyboard, Info, Highlighter, Lock, Plus, Trash2, Eye, EyeOff } from 'lucide-react'
+import { Bot, Terminal, Highlighter, Keyboard, Info, Lock, Key } from 'lucide-react'
 import { useStore, AIProvider, HighlightRule } from '../../store/appStore'
+import CredentialsVault from './CredentialsVault'
 import './SettingsPage.css'
 
 const PROVIDERS: { id: AIProvider; name: string; models: string[]; keyLabel: string; hasBaseUrl?: boolean }[] = [
@@ -12,7 +13,7 @@ const PROVIDERS: { id: AIProvider; name: string; models: string[]; keyLabel: str
 
 const FONT_FAMILIES = ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Monaco', 'Courier New', 'Consolas']
 
-type SettingsTab = 'ai' | 'terminal' | 'highlights' | 'security' | 'shortcuts' | 'about'
+type SettingsTab = 'ai' | 'terminal' | 'credentials' | 'highlights' | 'security' | 'shortcuts' | 'about'
 
 export default function SettingsPage() {
   const {
@@ -39,6 +40,7 @@ export default function SettingsPage() {
   const TABS: { id: SettingsTab; Icon: any; label: string }[] = [
     { id: 'ai',         Icon: Bot,          label: 'AI & Models' },
     { id: 'terminal',   Icon: Terminal,      label: 'Terminal' },
+    { id: 'credentials',Icon: Key,           label: 'Vault' },
     { id: 'highlights', Icon: Highlighter,   label: 'Highlights' },
     { id: 'security',   Icon: Lock,          label: 'Security' },
     { id: 'shortcuts',  Icon: Keyboard,      label: 'Shortcuts' },
@@ -208,6 +210,9 @@ export default function SettingsPage() {
             </div>
           </div>
         )}
+
+        {/* ── Credentials Vault ── */}
+        {activeTab === 'credentials' && <CredentialsVault />}
 
         {/* ── Highlights ── */}
         {activeTab === 'highlights' && (

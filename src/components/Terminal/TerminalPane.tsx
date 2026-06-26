@@ -68,17 +68,40 @@ export default function TerminalPane({ tab }: Props) {
     let result: any
 
     if (session) {
+      let runUser = session.username
+      let runPass = session.password || ''
+      let runKey = session.privateKey || ''
+      let runPassphrase = session.passphrase || ''
+      
+      if (session.credentialId) {
+        const cred = useStore.getState().credentials.find(c => c.id === session.credentialId)
+        if (cred) {
+          runUser = cred.username
+          if (cred.authMethod === 'password') {
+             runPass = (await api.keychainGet({ account: `cred-${cred.id}` })) || ''
+          } else if (cred.authMethod === 'key') {
+             runKey = cred.privateKey || ''
+             runPassphrase = (await api.keychainGet({ account: `cred-${cred.id}-passphrase` })) || ''
+          }
+        }
+      }
+
       // SSH connection
       result = await api.terminalCreateSSH({
         id:         tab.ptyId,
         host:       session.host,
         port:       session.port,
-        username:   session.username,
-        password:   session.password || '',
-        privateKey: session.privateKey || '',
-        passphrase: session.passphrase || '',
+        username:   runUser,
+        password:   runPass,
+        privateKey: runKey,
+        passphrase: runPassphrase,
         cols:       termRef.current?.cols  || 80,
         rows:       termRef.current?.rows  || 24,
+        jumpHost:   session.jumpHost,
+        socksProxy: session.socksProxy,
+        agentForwarding: session.agentForwarding,
+        verifyHost: session.verifyHost,
+        keepaliveInterval: session.keepaliveInterval,
       })
     } else {
       // Local shell
