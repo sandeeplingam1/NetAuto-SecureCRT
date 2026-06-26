@@ -175,7 +175,7 @@ export interface AppState {
   setKbInteractive:(e: KeyboardInteractiveEvent | null) => void
 
   // UI state
-  activeView: 'terminal' | 'sessions' | 'settings' | 'logs' | 'sftp' | 'portfwd' | 'macros' | 'hosts'
+  activeView: 'terminal' | 'sessions' | 'settings' | 'logs' | 'sftp' | 'portfwd' | 'macros' | 'hosts' | 'topology'
   setActiveView:          (v: AppState['activeView']) => void
   showAISidebar:          boolean
   toggleAISidebar:        () => void

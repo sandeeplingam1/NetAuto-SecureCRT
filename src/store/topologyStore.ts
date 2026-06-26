@@ -81,7 +81,7 @@ export const useTopologyStore = create<TopologyState>()(
           data: {
             ...data,
             status: 'unknown'
-          }
+          } as DeviceNodeData
         }
         
         set({ nodes: [...get().nodes, newNode] })
