@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { useStore, ChatMessage } from '../../store/appStore'
+import { useTopologyStore } from '../../store/topologyStore'
 
 const api = (window as any).helixAPI
 
@@ -43,6 +44,40 @@ Keep your reasoning concise (1-2 sentences).`
           required: ['command', 'reasoning']
         }
       }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'add_device_to_topology',
+        description: 'Add a discovered network device to the live topology map.',
+        parameters: {
+          type: 'object',
+          properties: {
+            hostname: { type: 'string', description: 'Hostname of the device' },
+            ip: { type: 'string', description: 'Management IP address' },
+            platform: { type: 'string', enum: ['cisco-ios', 'cisco-nxos', 'arista-eos', 'juniper-junos', 'firewall', 'generic'] },
+            site: { type: 'string', description: 'Physical site or location (e.g., Datacenter A)' }
+          },
+          required: ['hostname', 'ip', 'platform']
+        }
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'add_link_to_topology',
+        description: 'Add a physical or logical connection between two devices in the topology map.',
+        parameters: {
+          type: 'object',
+          properties: {
+            sourceHostname: { type: 'string' },
+            targetHostname: { type: 'string' },
+            sourcePort: { type: 'string', description: 'Local interface (e.g., Eth1/1)' },
+            targetPort: { type: 'string', description: 'Remote interface (e.g., Gi0/0)' }
+          },
+          required: ['sourceHostname', 'targetHostname', 'sourcePort', 'targetPort']
+        }
+      }
     }
   ]
 
@@ -84,6 +119,30 @@ Keep your reasoning concise (1-2 sentences).`
           })
           // Update the UI placeholder
           updateLastMessage({ isLoading: false, content: '' })
+        } else if (tc.function.name === 'add_device_to_topology') {
+          let args: any = {}
+          try { args = JSON.parse(tc.function.arguments) } catch (e) {}
+          useTopologyStore.getState().addNode(args)
+          
+          messagesRef.current.push({
+            role: 'tool',
+            tool_call_id: tc.id,
+            name: 'add_device_to_topology',
+            content: `Device ${args.hostname} added successfully.`
+          })
+          stepLoop(messagesRef.current, iteration)
+        } else if (tc.function.name === 'add_link_to_topology') {
+          let args: any = {}
+          try { args = JSON.parse(tc.function.arguments) } catch (e) {}
+          useTopologyStore.getState().addDiscoveredLink(args.sourceHostname, args.targetHostname, args.sourcePort, args.targetPort)
+          
+          messagesRef.current.push({
+            role: 'tool',
+            tool_call_id: tc.id,
+            name: 'add_link_to_topology',
+            content: `Link between ${args.sourceHostname} and ${args.targetHostname} added.`
+          })
+          stepLoop(messagesRef.current, iteration)
         }
       } else if (msg.content) {
         updateLastMessage({ isLoading: false, content: msg.content })

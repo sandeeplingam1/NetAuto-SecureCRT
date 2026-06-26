@@ -15,6 +15,7 @@ import MacrosView         from './components/Macros/MacrosView'
 import PortForwardView    from './components/PortForward/PortForwardView'
 import KnownHostsView     from './components/KnownHosts/KnownHostsView'
 import LogsView           from './components/Logs/LogsView'
+import TopologyView       from './components/Topology/TopologyView'
 import LockScreen         from './components/LockScreen/LockScreen'
 import { HostKeyDialog, KeyboardInteractiveDialog } from './components/SSHDialogs/SSHDialogs'
 import './App.css'
@@ -181,6 +182,9 @@ export default function App() {
 
           {/* ── Macros ── */}
           {view === 'macros' && <MacrosView />}
+
+          {/* ── Topology ── */}
+          {view === 'topology' && <TopologyView />}
 
           {/* ── Port Forwarding ── */}
           {view === 'portfwd' && <PortForwardView />}

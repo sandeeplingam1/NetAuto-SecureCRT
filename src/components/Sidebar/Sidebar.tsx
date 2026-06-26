@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Terminal, Monitor, FolderOpen, FileText, Settings,
-  Plus, Search, X, ChevronRight, ChevronDown,
+  Plus, Search, X, ChevronRight, ChevronDown, Network,
   Play, Copy, Trash2, Edit3, Lock, Radio, Cpu,
   ArrowRight, Zap, Shield, GitBranch, Upload, Download
 } from 'lucide-react'
@@ -44,6 +44,7 @@ function timeAgo(ts?: number) {
 
 const NAV_ITEMS = [
   { id: 'terminal', Icon: Terminal,    label: 'Terminal Workspace' },
+  { id: 'topology', Icon: Network,     label: 'Topology Map' },
   { id: 'sftp',     Icon: FolderOpen,  label: 'SFTP' },
   { id: 'portfwd',  Icon: ArrowRight,  label: 'Port Forwarding' },
   { id: 'macros',   Icon: Zap,         label: 'Macros' },
