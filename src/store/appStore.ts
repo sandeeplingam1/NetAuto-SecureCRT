@@ -58,6 +58,9 @@ export interface MacroCommand { cmd: string; delay: number }
 export interface Macro {
   id: string; name: string; description?: string
   commands: MacroCommand[]
+  hotkey?: string          // e.g. 'ctrl+shift+1'
+  variables?: string[]     // extracted variable names like ['ip', 'vlan']
+  category?: string
 }
 
 export interface HighlightRule {
