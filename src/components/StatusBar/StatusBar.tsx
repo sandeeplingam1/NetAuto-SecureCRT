@@ -22,7 +22,6 @@ export default function StatusBar() {
       <div className="sb-left">
         {session ? (
           <>
-            <span className={`sb-dot ${connStatus}`} />
             <span className="sb-text mono">{session.username}@{session.host}:{session.port}</span>
             <span className="sb-sep">·</span>
             <span className="sb-text">{session.protocol}</span>
@@ -39,7 +38,6 @@ export default function StatusBar() {
           </>
         ) : (
           <>
-            <span className="sb-dot" />
             <span className="sb-text muted">No active session</span>
           </>
         )}
@@ -51,7 +49,6 @@ export default function StatusBar() {
 
       <div className="sb-right">
         <span className="sb-ai-pill">
-          <span className="sb-ai-dot" />
           {PROVIDER_SHORT[aiSettings.provider]} · {model}
         </span>
         <span className="sb-sep">·</span>

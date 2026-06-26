@@ -92,7 +92,7 @@
 }
 .env-opt:hover { border-color: var(--env-color, var(--border)); }
 .env-opt.active { border-color: var(--env-color, var(--accent-blue)); color: var(--text-primary); }
-.env-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
 
 .form-note {
   font-size: 12px;

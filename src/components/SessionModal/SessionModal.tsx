@@ -416,9 +416,8 @@ export default function SessionModal() {
                   {ENV_OPTS.map(env => (
                     <button key={env}
                       className={`env-opt ${form.env === env ? 'active' : ''}`}
-                      style={{ '--env-color': ENV_COLORS[env] } as any}
+                      style={{ '--env-color': ENV_COLORS[env], borderLeftWidth: '3px', borderLeftColor: ENV_COLORS[env], borderLeftStyle: 'solid' } as any}
                       onClick={() => set('env', env)}>
-                      <span className="env-dot" style={{ background: ENV_COLORS[env] }} />
                       {env === 'none' ? 'None' : env.charAt(0).toUpperCase() + env.slice(1)}
                     </button>
                   ))}

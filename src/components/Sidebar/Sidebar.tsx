@@ -179,14 +179,13 @@ export default function Sidebar() {
               </button>
 
               {!collapsed[group] && items.map(session => (
-                <div
-                  key={session.id}
+                <div key={session.id}
                   className={`session-item ${selectedSessionId === session.id ? 'selected' : ''}`}
                   onClick={() => selectSession(session.id)}
                   onDoubleClick={() => handleConnect(session)}
                   onContextMenu={e => handleContextMenu(e, session)}
+                  style={{ borderLeftColor: ENV_COLORS[session.env], borderLeftWidth: session.env !== 'none' ? '2px' : '0', borderLeftStyle: 'solid' }}
                 >
-                  <span className="env-dot" style={{ background: ENV_COLORS[session.env] }} />
                   <div className="session-info min-w-0">
                     <div className="session-name truncate">
                       <ProtocolIcon protocol={session.protocol} />

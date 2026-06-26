@@ -129,8 +129,7 @@ export default function WelcomeScreen() {
           <div className="section-label">Recent</div>
           <div className="recent-list">
             {recent.map(s => (
-              <button key={s.id} className="recent-card" onClick={() => addTab(s.id)}>
-                <span className="recent-dot" style={{ background: envColor(s.env) }} />
+              <button key={s.id} className="recent-card" onClick={() => addTab(s.id)} style={{ borderLeftColor: envColor(s.env), borderLeftWidth: '3px' }}>
                 <div className="recent-info">
                   <div className="recent-name">{s.name}</div>
                   <div className="recent-host font-mono">

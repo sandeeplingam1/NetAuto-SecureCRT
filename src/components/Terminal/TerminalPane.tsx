@@ -231,16 +231,14 @@ export default function TerminalPane({ tab }: Props) {
 
       {/* Session bar */}
       {session && (
-        <div className="session-bar">
+        <div className="session-bar" style={{ borderLeft: session.env !== 'none' ? `3px solid ${ENV_COLOR[session.env]}` : '3px solid transparent' }}>
           <div className="sb-left">
-            <span className="env-indicator" style={{ background: ENV_COLOR[session.env] }} />
             <span className="device-name">{session.name}</span>
             <span className="sb-divider" />
             <span className="device-host font-mono">{session.username}@{session.host}:{session.port}</span>
             <span className="proto-tag">{session.protocol}</span>
           </div>
           <div className="sb-right">
-            <span className="status-dot" style={{ background: statusColor, boxShadow: tab.isConnected ? `0 0 5px ${statusColor}` : 'none' }} />
             <span className="status-text" style={{ color: statusColor }}>{statusLabel}</span>
             {tab.connectionError && (
               <span className="error-text" title={tab.connectionError}>⚠ {tab.connectionError.slice(0, 40)}</span>

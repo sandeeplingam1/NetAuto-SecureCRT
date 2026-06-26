@@ -11,10 +11,11 @@ export default function TabBar() {
         {tabs.map(tab => (
           <div
             key={tab.id}
-            className={`tab ${tab.id === activeTabId ? 'active' : ''}`}
+            className={`tab ${activeTabId === tab.id ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
+            style={{ borderLeft: `2px solid ${tab.isConnected ? 'var(--accent-green)' : 'transparent'}` }}
           >
-            <span className={`tab-dot ${tab.isConnected ? 'connected' : ''}`} />
+
             <span className="tab-label truncate">{tab.title}</span>
             <button
               className="tab-close"

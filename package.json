@@ -26,7 +26,6 @@
     },
     "win": {
       "target": "nsis",
-      "publisherName": "Sandeep Lingam",
       "artifactName": "${productName}-${version}-Windows.${ext}"
     },
     "nsis": {

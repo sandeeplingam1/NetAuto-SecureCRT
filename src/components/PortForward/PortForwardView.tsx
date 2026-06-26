@@ -104,7 +104,7 @@ export default function PortForwardView() {
         <div className="pf-list">
           {portForwards.map(pf => (
             <div key={pf.id} className={`pf-row ${pf.active ? 'active' : ''}`}>
-              <div className="pf-status-dot" />
+
               <div className="pf-route font-mono">
                 localhost:{pf.localPort}
                 <ArrowRight size={12} className="pf-arrow" />
