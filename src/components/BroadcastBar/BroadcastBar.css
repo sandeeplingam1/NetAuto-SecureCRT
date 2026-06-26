@@ -1,0 +1,48 @@
+.broadcast-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(124,58,237,0.08);
+  border-bottom: 1px solid rgba(124,58,237,0.25);
+  flex-shrink: 0;
+  animation: fadeIn 150ms ease;
+}
+.bc-icon  { color: var(--accent-purple); flex-shrink: 0; }
+.bc-label { font-size: 12px; font-weight: 700; color: var(--accent-purple); white-space: nowrap; }
+.bc-count {
+  font-size: 10.5px; color: var(--text-muted);
+  background: rgba(139,92,246,0.15);
+  padding: 1px 7px; border-radius: 10px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.bc-input {
+  flex: 1;
+  height: 28px;
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+.bc-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+.bc-input::placeholder { color: var(--text-muted); }
+
+.bc-send {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px;
+  background: var(--accent-purple);
+  color: white; border-radius: var(--radius-md);
+  font-size: 12px; font-weight: 500;
+}
+.bc-send:hover:not(:disabled) { background: #7c3aed; }
+.bc-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.bc-close {
+  width: 26px; height: 26px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+}
+.bc-close:hover { background: var(--bg-hover); color: var(--text-primary); }

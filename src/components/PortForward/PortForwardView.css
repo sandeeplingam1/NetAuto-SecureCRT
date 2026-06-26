@@ -1,0 +1,56 @@
+.pf-view { display: flex; flex-direction: column; flex: 1; padding: 28px; gap: 20px; overflow-y: auto; }
+.pf-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.pf-header h2 { font-size: 18px; font-weight: 700; }
+.pf-header p  { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+.pf-form {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.pf-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pf-form-row.three-col { grid-template-columns: 1fr 2fr 1fr; }
+.pf-field { display: flex; flex-direction: column; gap: 5px; }
+.pf-field label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.pf-form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+.pf-empty {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; margin: auto; color: var(--text-muted); padding: 40px;
+}
+.pf-empty p { font-size: 13px; text-align: center; max-width: 320px; }
+
+.pf-list { display: flex; flex-direction: column; gap: 6px; }
+.pf-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.pf-row.active { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.04); }
+.pf-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text-muted); flex-shrink: 0;
+}
+.pf-row.active .pf-status-dot {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px rgba(34,197,94,0.5);
+}
+.pf-route { display: flex; align-items: center; gap: 8px; font-size: 13px; flex: 1; }
+.pf-arrow { color: var(--text-muted); flex-shrink: 0; }
+.pf-session { font-size: 12px; color: var(--text-secondary); }
+.pf-type-tag {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  color: var(--accent-blue-3); background: rgba(59,130,246,0.1);
+  padding: 2px 8px; border-radius: 6px;
+}
+.pf-actions { display: flex; gap: 4px; }
+.pf-btn {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+}
+.pf-btn:hover     { background: var(--bg-hover); color: var(--text-primary); }
+.pf-btn.start:hover { color: var(--accent-green); }
+.pf-btn.stop:hover  { color: var(--accent-amber); }
+.pf-btn.rm:hover    { color: var(--accent-red); }

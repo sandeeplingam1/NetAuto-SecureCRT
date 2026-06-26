@@ -1,0 +1,97 @@
+/* ── App Layout ──────────────────────────────────────────────────────────── */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+.titlebar-drag {
+  height: var(--titlebar-height);
+  -webkit-app-region: drag;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* ── SFTP View ────────────────────────────────────────────────────────────── */
+.sftp-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.sftp-view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  background: var(--bg-elevated);
+}
+.sftp-view-back {
+  font-size: 12px;
+  color: var(--accent-blue-3);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.sftp-view-back:hover { background: rgba(59,130,246,0.08); }
+
+/* ── Logs View ────────────────────────────────────────────────────────────── */
+.logs-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 32px;
+  gap: 20px;
+  overflow-y: auto;
+}
+.logs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 700;
+}
+.logs-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+}
+.logs-hint code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-blue-3);
+}

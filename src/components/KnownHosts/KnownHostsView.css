@@ -1,0 +1,16 @@
+.kh-view { display: flex; flex-direction: column; flex: 1; padding: 28px; gap: 20px; overflow-y: auto; }
+.kh-header { display: flex; align-items: flex-start; justify-content: space-between; }
+.kh-header h2 { font-size: 18px; font-weight: 700; }
+.kh-header p  { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.kh-loading { color: var(--text-muted); font-size: 13px; text-align: center; padding: 40px; }
+.kh-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: auto; color: var(--text-muted); padding: 40px; }
+.kh-empty p { font-size: 13px; text-align: center; max-width: 300px; }
+.kh-table { display: flex; flex-direction: column; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.kh-thead { display: grid; grid-template-columns: 2fr 70px 5fr 36px; gap: 10px; padding: 8px 14px; background: var(--bg-hover); font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.kh-row { display: grid; grid-template-columns: 2fr 70px 5fr 36px; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--border-subtle); font-size: 12px; }
+.kh-row:hover { background: var(--bg-hover); }
+.kh-host { color: var(--accent-blue-3); }
+.kh-port { color: var(--text-muted); }
+.kh-fp   { color: var(--text-secondary); word-break: break-all; }
+.kh-rm { width: 28px; height: 28px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+.kh-rm:hover { color: var(--accent-red); background: rgba(239,68,68,0.1); }

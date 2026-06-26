@@ -1,0 +1,50 @@
+.ssh-dialog-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 700;
+}
+.ssh-dialog {
+  width: 420px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px 20px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+  box-shadow: var(--shadow-lg);
+}
+.ssh-dialog.danger { border-color: rgba(239,68,68,0.3); }
+.ssh-dialog.warn   { border-color: rgba(245,158,11,0.3); }
+
+.ssh-dialog-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ssh-dialog.danger .ssh-dialog-icon { background: rgba(239,68,68,0.1); color: var(--accent-red); }
+.ssh-dialog.warn   .ssh-dialog-icon { background: rgba(245,158,11,0.1); color: var(--accent-amber); }
+.ssh-dialog:not(.danger):not(.warn) .ssh-dialog-icon { background: rgba(59,130,246,0.1); color: var(--accent-blue-3); }
+
+.ssh-dialog h3 { font-size: 16px; font-weight: 700; text-align: center; }
+.ssh-dialog-host { font-family: var(--font-mono); font-size: 13px; color: var(--accent-blue-3); }
+.ssh-dialog-msg { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.6; max-width: 340px; }
+.danger-text { color: var(--accent-red); }
+
+.ssh-fingerprint {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.fp-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.fp-value { font-size: 11px; word-break: break-all; color: var(--text-secondary); line-height: 1.5; }
+
+.ssh-dialog-actions { display: flex; gap: 10px; width: 100%; margin-top: 4px; }
+.ssh-dialog-actions button { flex: 1; }
+
+.kb-prompts { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.kb-prompt { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.kb-prompt label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }

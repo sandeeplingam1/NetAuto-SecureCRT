@@ -1,0 +1,44 @@
+.lock-screen {
+  position: fixed; inset: 0;
+  background: rgba(10,14,23,0.97);
+  backdrop-filter: blur(20px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9000;
+}
+.lock-box {
+  width: 340px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+  padding: 40px 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+.lock-icon {
+  width: 60px; height: 60px;
+  border-radius: 18px;
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent-blue-3);
+}
+.lock-box h2 { font-size: 18px; font-weight: 700; }
+.lock-box p  { font-size: 13px; color: var(--text-secondary); }
+.lock-pin-input {
+  width: 100%;
+  font-size: 20px;
+  text-align: center;
+  letter-spacing: 0.3em;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+}
+.lock-error { font-size: 12px; color: var(--accent-red); }
+.lock-btn { width: 100%; justify-content: center; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60%  { transform: translateX(-8px); }
+  40%,80%  { transform: translateX(8px); }
+}
+.shake { animation: shake 0.4s ease; }

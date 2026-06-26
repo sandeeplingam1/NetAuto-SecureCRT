@@ -1,0 +1,163 @@
+import { useEffect } from 'react'
+import { useStore } from './store/appStore'
+import Sidebar            from './components/Sidebar/Sidebar'
+import TabBar             from './components/TabBar/TabBar'
+import AISidebar          from './components/AISidebar/AISidebar'
+import StatusBar          from './components/StatusBar/StatusBar'
+import SessionModal       from './components/SessionModal/SessionModal'
+import CommandPalette     from './components/CommandPalette/CommandPalette'
+import SettingsPage       from './components/Settings/SettingsPage'
+import WelcomeScreen      from './components/WelcomeScreen/WelcomeScreen'
+import SFTPPanel          from './components/SFTP/SFTPPanel'
+import SplitView          from './components/SplitView/SplitView'
+import BroadcastBar       from './components/BroadcastBar/BroadcastBar'
+import MacrosView         from './components/Macros/MacrosView'
+import PortForwardView    from './components/PortForward/PortForwardView'
+import KnownHostsView     from './components/KnownHosts/KnownHostsView'
+import LogsView           from './components/Logs/LogsView'
+import LockScreen         from './components/LockScreen/LockScreen'
+import { HostKeyDialog, KeyboardInteractiveDialog } from './components/SSHDialogs/SSHDialogs'
+import './App.css'
+
+const api = (window as any).helixAPI
+
+export default function App() {
+  const {
+    tabs, activeTabId, activeView,
+    showAISidebar, showCommandPalette, toggleCommandPalette,
+    showNewSessionModal, editingSession,
+    toggleAISidebar, setActiveView, addTab, closeTab,
+    setSplitLayout, splitLayout, broadcastMode, toggleBroadcast,
+    setHostKeyEvent, setKbInteractive,
+    lockSession, isLocked,
+  } = useStore()
+
+  // ── Subscribe to SSH events from main process ───────────────────────────────
+  useEffect(() => {
+    if (!api) return
+    const unHk  = api.onSSHUnknownHost((e: any)       => setHostKeyEvent(e))
+    const unHkC = api.onSSHHostKeyChanged((e: any)     => setHostKeyEvent({ ...e, stored: e.stored }))
+    const unKb  = api.onSSHKeyboardInteractive((e: any)=> setKbInteractive(e))
+    const unMenu = api.onMenuEvent((ev: string) => {
+      switch (ev) {
+        case 'settings':   setActiveView('settings'); break
+        case 'new-session': useStore.getState().setShowNewSessionModal(true); break
+        case 'new-tab':    addTab(); break
+        case 'close-tab':  if (activeTabId) closeTab(activeTabId); break
+        case 'broadcast':  toggleBroadcast(); break
+        case 'toggle-ai':  toggleAISidebar(); break
+        case 'sftp':       setActiveView('sftp'); break
+        case 'split-h':    setSplitLayout('horizontal'); break
+        case 'split-v':    setSplitLayout('vertical'); break
+        case 'palette':    toggleCommandPalette(); break
+      }
+    })
+    return () => { unHk(); unHkC(); unKb(); unMenu() }
+  }, [activeTabId])
+
+  // ── Global keyboard shortcuts ───────────────────────────────────────────────
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      const meta = e.metaKey || e.ctrlKey
+      if (meta && e.key === 'k' && !e.shiftKey) { e.preventDefault(); toggleCommandPalette() }
+      if (meta && e.key === 't')                 { e.preventDefault(); addTab() }
+      if (meta && e.key === 'w')                 { e.preventDefault(); if (activeTabId) closeTab(activeTabId) }
+      if (meta && e.key === ',')                 { e.preventDefault(); setActiveView('settings') }
+      if (meta && e.shiftKey && e.key === 'A')   { e.preventDefault(); toggleAISidebar() }
+      if (meta && e.shiftKey && e.key === 'S')   { e.preventDefault(); setActiveView('sftp') }
+      if (meta && e.shiftKey && e.key === 'L')   { e.preventDefault(); setActiveView('logs') }
+      if (meta && e.shiftKey && e.key === 'B')   { e.preventDefault(); toggleBroadcast() }
+      if (meta && e.shiftKey && e.key === 'H')   { e.preventDefault(); setSplitLayout('horizontal') }
+      if (meta && e.shiftKey && e.key === 'V')   { e.preventDefault(); setSplitLayout('vertical') }
+      if (meta && e.shiftKey && e.key === '4')   { e.preventDefault(); setSplitLayout('quad') }
+      if (meta && e.shiftKey && e.key === '1')   { e.preventDefault(); setSplitLayout('single') }
+      if (meta && e.key === 'l')                 { e.preventDefault(); lockSession() }
+
+      // ⌘1–9 tab switching
+      if (meta && !e.shiftKey && e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1
+        const tab = tabs[idx]
+        if (tab) { e.preventDefault(); useStore.getState().setActiveTab(tab.id) }
+      }
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [tabs, activeTabId, toggleCommandPalette, addTab, closeTab, setActiveView, toggleAISidebar, toggleBroadcast, setSplitLayout, lockSession])
+
+  const view = activeView
+
+  return (
+    <div className="app-root">
+      {/* macOS traffic-lights drag region */}
+      <div className="titlebar-drag" />
+
+      <div className="app-body">
+        {/* Left sidebar */}
+        <Sidebar />
+
+        {/* Main content */}
+        <div className="main-content">
+
+          {/* ── Terminal view ── */}
+          {view === 'terminal' && (
+            <>
+              <TabBar />
+              <BroadcastBar />
+              <div className="workspace">
+                {tabs.length === 0
+                  ? <WelcomeScreen />
+                  : <SplitView tabs={tabs} activeTabId={activeTabId} layout={splitLayout} />
+                }
+              </div>
+            </>
+          )}
+
+          {/* ── Settings ── */}
+          {view === 'settings' && <SettingsPage />}
+
+          {/* ── SFTP ── */}
+          {view === 'sftp' && (
+            <div className="sftp-view">
+              <div className="sftp-view-header">
+                <span>SFTP File Browser</span>
+                <button className="sftp-view-back" onClick={() => setActiveView('terminal')}>
+                  ← Back to Terminal
+                </button>
+              </div>
+              <SFTPPanel />
+            </div>
+          )}
+
+          {/* ── Logs ── */}
+          {view === 'logs' && <LogsView />}
+
+          {/* ── Macros ── */}
+          {view === 'macros' && <MacrosView />}
+
+          {/* ── Port Forwarding ── */}
+          {view === 'portfwd' && <PortForwardView />}
+
+          {/* ── Known Hosts ── */}
+          {view === 'hosts' && <KnownHostsView />}
+        </div>
+
+        {/* AI Sidebar */}
+        {showAISidebar && <AISidebar />}
+      </div>
+
+      {/* Status Bar */}
+      <StatusBar />
+
+      {/* Modals & Overlays */}
+      {(showNewSessionModal || editingSession) && <SessionModal />}
+      {showCommandPalette && <CommandPalette />}
+
+      {/* SSH Security Dialogs */}
+      <HostKeyDialog />
+      <KeyboardInteractiveDialog />
+
+      {/* Lock Screen */}
+      <LockScreen />
+    </div>
+  )
+}

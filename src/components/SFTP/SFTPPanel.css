@@ -1,0 +1,110 @@
+.sftp-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-base);
+}
+
+.sftp-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Toolbar */
+.sftp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sftp-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: all var(--transition);
+}
+.sftp-btn:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-secondary); }
+.sftp-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.sftp-btn.upload {
+  margin-left: auto;
+  color: var(--accent-blue-3);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.sftp-btn.upload:hover { background: rgba(59,130,246,0.08); }
+
+.sftp-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow: hidden;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+.sftp-crumb-wrap { display: flex; align-items: center; gap: 2px; }
+.sftp-crumb {
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.sftp-crumb:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* File list */
+.sftp-list { flex: 1; min-height: 0; }
+.sftp-error {
+  padding: 16px;
+  color: var(--accent-red);
+  font-size: 12.5px;
+}
+.sftp-empty-dir {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.sftp-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: default;
+  transition: background var(--transition);
+}
+.sftp-entry:hover { background: var(--bg-hover); }
+.sftp-entry:hover .sftp-dl-btn { opacity: 1; }
+.sftp-entry.dir { cursor: pointer; }
+.sftp-entry.dir .sftp-entry-icon { color: var(--accent-blue-3); }
+
+.sftp-entry-icon { color: var(--text-muted); flex-shrink: 0; }
+.sftp-entry-name { flex: 1; font-size: 12.5px; }
+.sftp-entry.dir .sftp-entry-name { color: var(--text-primary); font-weight: 500; }
+.sftp-entry-size { font-size: 11px; color: var(--text-muted); width: 56px; text-align: right; flex-shrink: 0; }
+.sftp-entry-date { font-size: 11px; color: var(--text-muted); width: 110px; text-align: right; flex-shrink: 0; }
+.sftp-dl-btn {
+  opacity: 0;
+  width: 20px; height: 20px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.sftp-dl-btn:hover { background: var(--bg-active); color: var(--text-primary); }
