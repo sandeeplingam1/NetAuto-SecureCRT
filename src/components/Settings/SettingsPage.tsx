@@ -75,7 +75,7 @@ export default function SettingsPage() {
                     className={`provider-card ${aiSettings.provider === p.id ? 'active' : ''}`}
                     onClick={() => updateAISettings({ provider: p.id })}>
                     <span className="provider-name">{p.name}</span>
-                    {aiSettings.provider === p.id && <span className="provider-check">✓</span>}
+                    {aiSettings.provider === p.id && <span className="provider-check">Active</span>}
                   </button>
                 ))}
               </div>
@@ -269,7 +269,7 @@ export default function SettingsPage() {
               </div>
               <div className="settings-actions" style={{ marginTop: 10 }}>
                 <button className="btn-primary" onClick={savePin}>
-                  {pinSaved ? '✓ Saved' : 'Save PIN'}
+                  {pinSaved ? 'Saved' : 'Save PIN'}
                 </button>
                 <button className="btn-secondary" onClick={lockSession} disabled={isLocked}>
                   <Lock size={13} /> Lock Now (⌘L)

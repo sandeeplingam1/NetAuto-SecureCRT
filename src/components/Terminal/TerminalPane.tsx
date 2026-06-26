@@ -241,7 +241,7 @@ export default function TerminalPane({ tab }: Props) {
           <div className="sb-right">
             <span className="status-text" style={{ color: statusColor }}>{statusLabel}</span>
             {tab.connectionError && (
-              <span className="error-text" title={tab.connectionError}>⚠ {tab.connectionError.slice(0, 40)}</span>
+              <span className="error-text" title={tab.connectionError}>Error: {tab.connectionError.slice(0, 40)}</span>
             )}
             <div className="bar-actions">
               <button className="bar-btn" title="Search (⌘F)" onClick={() => setShowSearch(s => !s)}>

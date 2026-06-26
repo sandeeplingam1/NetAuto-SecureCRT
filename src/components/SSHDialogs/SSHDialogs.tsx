@@ -27,7 +27,7 @@ export function HostKeyDialog() {
         <div className="ssh-dialog-icon">
           {isChanged ? <AlertTriangle size={22} /> : <Shield size={22} />}
         </div>
-        <h3>{isChanged ? '⚠ Host Key Changed!' : 'Unknown Host'}</h3>
+        <h3>{isChanged ? 'Host Key Changed!' : 'Unknown Host'}</h3>
         <div className="ssh-dialog-host">{host}:{port}</div>
 
         {isChanged ? (

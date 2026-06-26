@@ -32,7 +32,7 @@ export default function StatusBar() {
             {activeTab?.logPath && (
               <>
                 <span className="sb-sep">·</span>
-                <span className="sb-text log-active">● Logging</span>
+                <span className="sb-text log-active">Logging</span>
               </>
             )}
           </>

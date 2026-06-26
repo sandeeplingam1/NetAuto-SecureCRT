@@ -219,7 +219,7 @@ export default function SessionModal() {
                     {(['password', 'key', 'agent'] as AuthMethod[]).map(m => (
                       <button key={m} className={`auth-btn ${form.authMethod === m ? 'active' : ''}`}
                         onClick={() => set('authMethod', m)}>
-                        {m === 'password' ? '🔑 Password' : m === 'key' ? '🗝 Key File' : '🤖 SSH Agent'}
+                        {m === 'password' ? 'Password' : m === 'key' ? 'Key File' : 'SSH Agent'}
                       </button>
                     ))}
                   </div>

@@ -217,7 +217,7 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
             setLoading(false)
           })
         } else if (result.error) {
-          updateLastMessage({ content: `⚠ ${result.error}`, isLoading: false })
+          updateLastMessage({ content: `Error: ${result.error}`, isLoading: false })
           setLoading(false)
         } else {
           // Non-streaming (Google, or fallback)
@@ -234,7 +234,7 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
         setLoading(false)
       }
     } catch (e: any) {
-      updateLastMessage({ content: `⚠ Error: ${e.message}`, isLoading: false })
+      updateLastMessage({ content: `Error: ${e.message}`, isLoading: false })
       setLoading(false)
     }
   }, [loading, chatMessages, aiSettings, termCtx, api, addChatMessage, updateLastMessage])
