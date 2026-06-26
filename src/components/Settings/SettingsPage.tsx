@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bot, Terminal, Highlighter, Keyboard, Info, Lock, Key } from 'lucide-react'
+import { Bot, Terminal, Shield, Keyboard, Info, Highlighter, Lock, Plus, Trash2, Eye, EyeOff, Key } from 'lucide-react'
 import { useStore, AIProvider, HighlightRule } from '../../store/appStore'
 import CredentialsVault from './CredentialsVault'
 import './SettingsPage.css'

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FolderOpen, ChevronDown, ChevronUp, GitBranch, Cpu } from 'lucide-react'
+import { FolderOpen, ChevronDown, ChevronUp, GitBranch, Cpu, Lock } from 'lucide-react'
 import { useStore, Session, EnvTag, Protocol, AuthMethod, JumpHost } from '../../store/appStore'
 import './SessionModal.css'
 
