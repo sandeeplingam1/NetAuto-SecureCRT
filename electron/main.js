@@ -862,6 +862,112 @@ ipcMain.handle('ai:chat', async (event, { provider, apiKey, model, messages, bas
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
+// IPC: AI Agent (Tool Calling, Non-streaming)
+// ─────────────────────────────────────────────────────────────────────────────
+ipcMain.handle('ai:agent-chat', async (event, { provider, apiKey, model, messages, tools, baseUrl }) => {
+  try {
+    let url = '', headers = { 'Content-Type': 'application/json' }, body = {}
+
+    if (provider === 'openai') {
+      url = 'https://api.openai.com/v1/chat/completions'
+      headers['Authorization'] = `Bearer ${apiKey}`
+      body = { model: model || 'gpt-4o', messages, max_tokens: 4096, tools }
+    } else if (provider === 'anthropic') {
+      url = 'https://api.anthropic.com/v1/messages'
+      headers['x-api-key'] = apiKey
+      headers['anthropic-version'] = '2023-06-01'
+      const sys = messages.find(m => m.role === 'system')
+      body = {
+        model: model || 'claude-3-5-sonnet-20241022', max_tokens: 4096,
+        system: sys?.content || 'You are an agentic network engineering AI.',
+        messages: messages.filter(m => m.role !== 'system').map(m => {
+          if (m.role === 'tool') {
+            return { role: 'user', content: [{ type: 'tool_result', tool_use_id: m.tool_call_id, content: m.content }] }
+          }
+          if (m.tool_calls) {
+            return { role: 'assistant', content: m.tool_calls.map(tc => ({ type: 'tool_use', id: tc.id, name: tc.function.name, input: JSON.parse(tc.function.arguments) })) }
+          }
+          return { role: m.role, content: m.content }
+        }),
+        tools: tools.map(t => ({
+          name: t.function.name,
+          description: t.function.description,
+          input_schema: t.function.parameters
+        }))
+      }
+    } else if (provider === 'google') {
+      const mdl = model || 'gemini-1.5-pro'
+      url = `https://generativelanguage.googleapis.com/v1beta/models/${mdl}:generateContent?key=${apiKey}`
+      const sysMsg = messages.find(m => m.role === 'system')
+      body = {
+        contents: messages
+          .filter(m => m.role !== 'system')
+          .map(m => {
+            if (m.role === 'tool') {
+              return { role: 'function', parts: [{ functionResponse: { name: m.name, response: { result: m.content } } }] }
+            }
+            if (m.tool_calls) {
+              return { role: 'model', parts: m.tool_calls.map(tc => ({ functionCall: { name: tc.function.name, args: JSON.parse(tc.function.arguments) } })) }
+            }
+            return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }
+          }),
+        ...(sysMsg ? { systemInstruction: { parts: [{ text: sysMsg.content }] } } : {}),
+        tools: [{
+          functionDeclarations: tools.map(t => ({
+            name: t.function.name,
+            description: t.function.description,
+            parameters: t.function.parameters
+          }))
+        }]
+      }
+    } else {
+      throw new Error(`Provider ${provider} does not support tool calling in this version.`)
+    }
+
+    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
+    const data = await res.json()
+    if (!res.ok) throw new Error(`API ${res.status}: ${JSON.stringify(data)}`)
+
+    // Normalize response to OpenAI format { message: { role: 'assistant', content: string, tool_calls: [...] } }
+    if (provider === 'openai') {
+      return { message: data.choices[0].message }
+    } else if (provider === 'anthropic') {
+      const msg = { role: 'assistant', content: '', tool_calls: [] }
+      for (const block of data.content) {
+        if (block.type === 'text') msg.content += block.text
+        if (block.type === 'tool_use') {
+          msg.tool_calls.push({
+            id: block.id,
+            type: 'function',
+            function: { name: block.name, arguments: JSON.stringify(block.input) }
+          })
+        }
+      }
+      return { message: msg }
+    } else if (provider === 'google') {
+      const part = data.candidates?.[0]?.content?.parts?.[0]
+      const msg = { role: 'assistant', content: '', tool_calls: [] }
+      if (part?.text) msg.content = part.text
+      if (data.candidates?.[0]?.content?.parts) {
+        for (const p of data.candidates[0].content.parts) {
+          if (p.functionCall) {
+            msg.tool_calls.push({
+              id: `call_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+              type: 'function',
+              function: { name: p.functionCall.name, arguments: JSON.stringify(p.functionCall.args) }
+            })
+          }
+        }
+      }
+      return { message: msg }
+    }
+  } catch (e) {
+    return { error: e.message }
+  }
+})
+
+
+// ─────────────────────────────────────────────────────────────────────────────
 // IPC: File dialogs
 // ─────────────────────────────────────────────────────────────────────────────
 ipcMain.handle('dialog:open-file', async (_e, opts = {}) => {

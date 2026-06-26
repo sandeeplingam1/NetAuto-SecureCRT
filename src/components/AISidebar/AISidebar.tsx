@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Bot, Trash2, Settings, Send, Sparkles, AlertTriangle, Wrench,
          AlignLeft, Network, Radio, CornerDownLeft, Copy, Check } from 'lucide-react'
 import { useStore, ChatMessage, AIProvider } from '../../store/appStore'
+import { useAgentLoop } from './useAgentLoop'
+import AgentApproval from './AgentApproval'
 import './AISidebar.css'
 
 declare global {
@@ -135,9 +137,11 @@ export default function AISidebar() {
 
   const [input, setInput]   = useState('')
   const [loading, setLoading] = useState(false)
+  const [agentMode, setAgentMode] = useState(false)
   const endRef   = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const api = window.helixAPI
+  const agent = useAgentLoop()
 
   const activeTab = tabs.find(t => t.id === activeTabId)
   const termCtx   = activeTab?.terminalOutput.slice(-aiSettings.contextLines).join('').slice(-8000) || ''
@@ -166,8 +170,14 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
   }
 
   const sendMessage = useCallback(async (text: string) => {
-    if (!text.trim() || loading) return
+    if (!text.trim() || loading || agent.isAgentRunning) return
     setInput('')
+    
+    if (agentMode) {
+      agent.startAgent(text)
+      return
+    }
+
     setLoading(true)
 
     addChatMessage({ role: 'user', content: text })
@@ -237,40 +247,26 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
       updateLastMessage({ content: `Error: ${e.message}`, isLoading: false })
       setLoading(false)
     }
-  }, [loading, chatMessages, aiSettings, termCtx, api, addChatMessage, updateLastMessage])
-
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) }
-  }
-
-  // Auto-resize textarea
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value)
-    e.target.style.height = 'auto'
-    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
-  }
+  }, [loading, chatMessages, aiSettings, termCtx, api, addChatMessage, updateLastMessage, agentMode, agent])
 
   return (
     <aside className="ai-sidebar">
 
-      {/* Header */}
-      <div className="ai-header">
-        <div className="ai-header-left">
-          <div className="ai-avatar"><Bot size={14} strokeWidth={1.75} /></div>
-          <div>
-            <div className="ai-name">Helix AI</div>
-            <div className="ai-model">{PROVIDER_NAMES[aiSettings.provider]}</div>
-          </div>
+      <div className="ais-header">
+        <div className="ais-title">
+          <Sparkles size={14} className="ais-icon" /> AI Assistant
+          {agentMode && <span className="ais-badge">AGENT</span>}
         </div>
-        <div className="ai-actions">
-          {termCtx && (
-            <div className="ctx-pill" data-tooltip={`Sending last ${aiSettings.contextLines} terminal lines as context`}>
-              <span className="ctx-dot" />
-              ctx
-            </div>
-          )}
-          <button className="icon-btn" onClick={clearChat} data-tooltip="Clear chat"><Trash2 size={13} /></button>
-          <button className="icon-btn" onClick={() => setActiveView('settings')} data-tooltip="AI Settings"><Settings size={13} /></button>
+        <div className="ais-actions">
+          <button 
+            className={`btn-icon ${agentMode ? 'active' : ''}`} 
+            onClick={() => setAgentMode(!agentMode)} 
+            data-tooltip="Toggle Agent Mode (Auto-run commands)"
+          >
+            <Bot size={13} />
+          </button>
+          <button className="btn-icon" onClick={() => setActiveView('settings')} data-tooltip="AI Settings"><Settings size={13} /></button>
+          <button className="btn-icon" onClick={clearChat} data-tooltip="Clear Chat"><Trash2 size={13} /></button>
         </div>
       </div>
 
@@ -286,28 +282,11 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
       {/* Chat */}
       <div className="chat-area scrollable">
         {chatMessages.length === 0 ? (
-          <div className="empty-chat">
-            <div className="empty-icon"><Sparkles size={22} strokeWidth={1.5} /></div>
-            <div className="empty-title">Helix AI</div>
-            <div className="empty-sub">
-              {hasKey()
-                ? 'Your AI network engineer. Ask about CLI output, configs, or troubleshooting.'
-                : 'Add your API key in Settings to start using AI assistance.'}
-            </div>
-            {hasKey() ? (
-              <div className="quick-grid">
-                {QUICK_ACTIONS.map(({ Icon, label, prompt }, i) => (
-                  <button key={i} className="quick-btn" onClick={() => sendMessage(prompt)}>
-                    <Icon size={12} strokeWidth={1.75} />
-                    <span>{label}</span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <button className="configure-key-btn" onClick={() => setActiveView('settings')}>
-                Configure API Key →
-              </button>
-            )}
+          <div className="ais-empty animate-fade-in">
+            <Sparkles size={24} className="ais-empty-icon" />
+            <p>I'm your AI assistant.</p>
+            <p className="ais-empty-sub">Ask me anything about your network, or click a quick action below.</p>
+            {agentMode && <p className="ais-empty-agent-sub">Agent mode is ON. I will ask for approval before running commands.</p>}
           </div>
         ) : (
           <div className="msg-list">
@@ -319,16 +298,27 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
 
       {/* Input */}
       <div className="ai-input-area">
-        <div className="input-box">
+        <div className="ais-input-wrap">
+          {agent.isAgentRunning && !agent.pendingApproval && (
+            <div className="ais-agent-running-overlay">
+              <div className="typing"><span /><span /><span /></div>
+              Agent is thinking...
+              <button className="ais-agent-stop" onClick={agent.stopAgent}>Stop</button>
+            </div>
+          )}
           <textarea
             ref={inputRef}
-            className="ai-textarea"
-            placeholder={hasKey() ? 'Ask Helix AI…  (⏎ send, ⇧⏎ newline)' : 'Configure API key first…'}
+            className="ais-input"
+            placeholder={agentMode ? "Give the agent a task..." : "Ask AI or run action..."}
             value={input}
-            onChange={handleInput}
-            onKeyDown={handleKey}
-            disabled={loading}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); sendMessage(input)
+              }
+            }}
             rows={1}
+            disabled={agent.isAgentRunning && !agent.pendingApproval}
           />
           <button
             className={`send-btn ${loading ? 'loading' : ''}`}

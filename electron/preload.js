@@ -105,8 +105,9 @@ contextBridge.exposeInMainWorld('helixAPI', {
   logOpenDir: ()     => ipcRenderer.invoke('log:open-dir'),
   logList:    ()     => ipcRenderer.invoke('log:list'),
 
-  // ── Macros ───────────────────────────────────────────────────────────────────
+  // ── Macros & Agent ───────────────────────────────────────────────────────────
   macroRun: (opts) => ipcRenderer.invoke('macro:run', opts),
+  agentChat: (opts) => ipcRenderer.invoke('ai:agent-chat', opts),
 
   // ── Serial ports ─────────────────────────────────────────────────────────────
   serialList: () => ipcRenderer.invoke('serial:list'),
