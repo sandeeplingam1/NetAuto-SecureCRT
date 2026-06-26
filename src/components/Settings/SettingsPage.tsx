@@ -3,11 +3,11 @@ import { Bot, Terminal, Shield, Keyboard, Info, Highlighter, Lock, Plus, Trash2,
 import { useStore, AIProvider, HighlightRule } from '../../store/appStore'
 import './SettingsPage.css'
 
-const PROVIDERS: { id: AIProvider; name: string; icon: any; models: string[]; keyLabel: string; hasBaseUrl?: boolean }[] = [
-  { id: 'openai',    name: 'OpenAI',         icon: Bot, models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],                               keyLabel: 'API Key (sk-...)' },
-  { id: 'anthropic', name: 'Anthropic',       icon: Bot, models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],    keyLabel: 'API Key (sk-ant-...)' },
-  { id: 'google',    name: 'Google Gemini',   icon: Bot, models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'],                               keyLabel: 'API Key (AIza...)' },
-  { id: 'ollama',    name: 'Ollama (Local)',  icon: Bot, models: ['llama3', 'llama3.1', 'mistral', 'qwen2.5', 'phi3', 'codellama', 'deepseek-r1'],         keyLabel: 'Not required (local)', hasBaseUrl: true },
+const PROVIDERS: { id: AIProvider; name: string; models: string[]; keyLabel: string; hasBaseUrl?: boolean }[] = [
+  { id: 'openai',    name: 'OpenAI',         models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],                               keyLabel: 'API Key (sk-...)' },
+  { id: 'anthropic', name: 'Anthropic',       models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],    keyLabel: 'API Key (sk-ant-...)' },
+  { id: 'google',    name: 'Google Gemini',   models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'],                               keyLabel: 'API Key (AIza...)' },
+  { id: 'ollama',    name: 'Ollama (Local)',  models: ['llama3', 'llama3.1', 'mistral', 'qwen2.5', 'phi3', 'codellama', 'deepseek-r1'],         keyLabel: 'Not required (local)', hasBaseUrl: true },
 ]
 
 const FONT_FAMILIES = ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Monaco', 'Courier New', 'Consolas']
@@ -74,7 +74,6 @@ export default function SettingsPage() {
                   <button key={p.id}
                     className={`provider-card ${aiSettings.provider === p.id ? 'active' : ''}`}
                     onClick={() => updateAISettings({ provider: p.id })}>
-                    <span className="provider-icon"><p.icon size={16} /></span>
                     <span className="provider-name">{p.name}</span>
                     {aiSettings.provider === p.id && <span className="provider-check">✓</span>}
                   </button>
