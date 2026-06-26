@@ -42,8 +42,7 @@ function timeAgo(ts?: number) {
 }
 
 const NAV_ITEMS = [
-  { id: 'terminal', Icon: Terminal,    label: 'Terminal' },
-  { id: 'sessions', Icon: Monitor,     label: 'Sessions' },
+  { id: 'terminal', Icon: Terminal,    label: 'Terminal Workspace' },
   { id: 'sftp',     Icon: FolderOpen,  label: 'SFTP' },
   { id: 'portfwd',  Icon: ArrowRight,  label: 'Port Forwarding' },
   { id: 'macros',   Icon: Zap,         label: 'Macros' },
@@ -133,7 +132,8 @@ export default function Sidebar() {
             onClick={() => setActiveView(id as any)}
             title={label}
           >
-            <Icon size={16} strokeWidth={1.75} />
+            <Icon size={15} strokeWidth={1.75} />
+            <span>{label}</span>
           </button>
         ))}
       </nav>
