@@ -82,6 +82,24 @@
   font-size: 18px;
   font-weight: 700;
 }
+.empty-sub   { font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 320px; margin: 0 auto; margin-top: 10px; }
+
+/* ── Resize Handles ───────────────────────────────────────────────────────── */
+.resize-handle {
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+  z-index: 50;
+}
+.resize-handle.vertical {
+  width: 4px;
+  cursor: col-resize;
+  background: var(--border-subtle);
+}
+.resize-handle.vertical:hover,
+.resize-handle.vertical:active {
+  background: var(--accent-blue);
+  width: 4px;
+}
 .logs-hint {
   font-size: 13px;
   color: var(--text-secondary);

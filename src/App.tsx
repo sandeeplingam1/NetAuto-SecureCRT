@@ -58,11 +58,11 @@ export default function App() {
 
   // ── Global keyboard shortcuts ───────────────────────────────────────────────
   useEffect(() => {
-    const h = (e: KeyboardEvent) => {
+    const handleKey = (e: KeyboardEvent) => {
       const meta = e.metaKey || e.ctrlKey
       if (meta && e.key === 'k' && !e.shiftKey) { e.preventDefault(); toggleCommandPalette() }
       if (meta && e.key === 't')                 { e.preventDefault(); addTab() }
-      if (meta && e.key === 'w')                 { e.preventDefault(); if (activeTabId) closeTab(activeTabId) }
+      if (meta && e.key === 'w')                 { e.preventDefault(); const st = useStore.getState(); if (st.activeTabId) st.closeTab(st.activeTabId) }
       if (meta && e.key === ',')                 { e.preventDefault(); setActiveView('settings') }
       if (meta && e.shiftKey && e.key === 'A')   { e.preventDefault(); toggleAISidebar() }
       if (meta && e.shiftKey && e.key === 'S')   { e.preventDefault(); setActiveView('sftp') }
@@ -73,7 +73,8 @@ export default function App() {
       if (meta && e.shiftKey && e.key === '4')   { e.preventDefault(); setSplitLayout('quad') }
       if (meta && e.shiftKey && e.key === '1')   { e.preventDefault(); setSplitLayout('single') }
       if (meta && e.key === 'l')                 { e.preventDefault(); lockSession() }
-      // ⌘[ / ⌘] — cycle focus between panes
+
+      // Cycle through panes
       if (meta && e.key === '[' && splitLayout !== 'single') {
         e.preventDefault()
         const paneCount = splitLayout === 'quad' ? 4 : 2
@@ -92,11 +93,46 @@ export default function App() {
         if (tab) { e.preventDefault(); useStore.getState().setActiveTab(tab.id) }
       }
     }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
   }, [tabs, activeTabId, toggleCommandPalette, addTab, closeTab, setActiveView, toggleAISidebar, toggleBroadcast, setSplitLayout, lockSession, splitLayout, activePaneIndex, setActivePaneIndex])
 
-  const view = activeView
+  // ── Sidebar Resize Handlers ─────────────────────────────────────────────────
+  const startResizeLeft = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const onMove = (ev: MouseEvent) => {
+      let w = ev.clientX
+      if (w < 180) w = 180
+      if (w > 600) w = 600
+      document.documentElement.style.setProperty('--sidebar-width', `${w}px`)
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }
+
+  const startResizeRight = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const onMove = (ev: MouseEvent) => {
+      let w = window.innerWidth - ev.clientX
+      if (w < 260) w = 260
+      if (w > 800) w = 800
+      document.documentElement.style.setProperty('--ai-panel-width', `${w}px`)
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }
+
+  const view = isLocked ? 'locked' : activeView
+
+  if (isLocked) return <LockScreen />
 
   return (
     <div className="app-root">
@@ -106,6 +142,7 @@ export default function App() {
       <div className="app-body">
         {/* Left sidebar */}
         <Sidebar />
+        <div className="resize-handle vertical" onMouseDown={startResizeLeft} />
 
         {/* Main content */}
         <div className="main-content">
@@ -154,7 +191,12 @@ export default function App() {
         </div>
 
         {/* AI Sidebar */}
-        {showAISidebar && <AISidebar />}
+        {showAISidebar && (
+          <>
+            <div className="resize-handle vertical" onMouseDown={startResizeRight} />
+            <AISidebar />
+          </>
+        )}
       </div>
 
       {/* Status Bar */}
