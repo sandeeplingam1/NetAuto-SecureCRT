@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useStore } from './store/appStore'
 import Sidebar            from './components/Sidebar/Sidebar'
-import TabBar             from './components/TabBar/TabBar'
+import TitleBar           from './components/TitleBar/TitleBar'
 import AISidebar          from './components/AISidebar/AISidebar'
 import StatusBar          from './components/StatusBar/StatusBar'
 import SessionModal       from './components/SessionModal/SessionModal'
@@ -136,8 +136,8 @@ export default function App() {
 
   return (
     <div className="app-root">
-      {/* macOS traffic-lights drag region */}
-      <div className="titlebar-drag" />
+      {/* macOS traffic-lights drag region & global controls */}
+      <TitleBar />
 
       <div className="app-body">
         {/* Left sidebar */}
@@ -150,7 +150,6 @@ export default function App() {
           {/* ── Terminal view ── */}
           {view === 'terminal' && (
             <>
-              <TabBar />
               <BroadcastBar />
               <div className="workspace">
                 {tabs.length === 0

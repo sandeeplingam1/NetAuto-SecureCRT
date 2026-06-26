@@ -7,13 +7,6 @@
   background: var(--bg-base);
 }
 
-.titlebar-drag {
-  height: var(--titlebar-height);
-  -webkit-app-region: drag;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
-  flex-shrink: 0;
-}
 
 .app-body {
   display: flex;
