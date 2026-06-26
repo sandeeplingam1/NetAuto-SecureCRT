@@ -908,5 +908,68 @@ ipcMain.handle('sessions:import', async () => {
   } catch (e) { return { error: e.message } }
 })
 
+ipcMain.handle('sessions:importSecureCRT', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Select SecureCRT Sessions Folder',
+    properties: ['openDirectory'],
+  })
+  if (result.canceled || !result.filePaths.length) return { cancelled: true }
+
+  const baseDir = result.filePaths[0]
+  
+  function scanSecureCRTSessions(dir, rootDir) {
+    let imported = []
+    const files = fs.readdirSync(dir)
+    for (const f of files) {
+      const fullPath = path.join(dir, f)
+      const stat = fs.statSync(fullPath)
+      if (stat.isDirectory()) {
+        imported = imported.concat(scanSecureCRTSessions(fullPath, rootDir))
+      } else if (f.toLowerCase().endsWith('.ini') && f !== 'Default.ini' && f !== '__FolderData__.ini') {
+        try {
+          const content = fs.readFileSync(fullPath, 'utf8')
+          const name = path.basename(f, '.ini')
+          let groupPath = path.relative(rootDir, dir).replace(/\\/g, '/') || 'Default'
+
+          const hostnameMatch = content.match(/S:"Hostname"=(.+)/)
+          const usernameMatch = content.match(/S:"Username"=(.+)/)
+          const portMatch = content.match(/D:"Port"=([0-9a-fA-F]+)/)
+          const protoMatch = content.match(/S:"Protocol Name"=(.+)/)
+
+          if (hostnameMatch) {
+            let protocol = 'SSH'
+            const rawProto = protoMatch ? protoMatch[1].toLowerCase() : ''
+            if (rawProto.includes('telnet')) protocol = 'Telnet'
+            if (rawProto.includes('serial')) protocol = 'Serial'
+
+            imported.push({
+              id: crypto.randomUUID(),
+              name,
+              host: hostnameMatch[1].trim(),
+              username: usernameMatch ? usernameMatch[1].trim() : '',
+              port: portMatch ? parseInt(portMatch[1], 16) : (protocol === 'Telnet' ? 23 : 22),
+              protocol,
+              group: groupPath,
+              authMethod: 'password',
+              env: 'none',
+              verifyHost: true,
+              keepaliveInterval: 30000
+            })
+          }
+        } catch (e) {
+          console.error(`Failed to parse ${fullPath}:`, e)
+        }
+      }
+    }
+    return imported
+  }
+
+  try {
+    const sessions = scanSecureCRTSessions(baseDir, baseDir)
+    return { ok: true, sessions }
+  } catch (e) { return { error: e.message } }
+})
+
+
 // SSH host key trust reply from renderer
 // (individual events registered per-connection in create-ssh above)

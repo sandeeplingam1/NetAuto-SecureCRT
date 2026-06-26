@@ -118,6 +118,7 @@ contextBridge.exposeInMainWorld('helixAPI', {
   // ── Session import/export ─────────────────────────────────────────────────────
   sessionsExport: (opts) => ipcRenderer.invoke('sessions:export', opts),
   sessionsImport: ()     => ipcRenderer.invoke('sessions:import'),
+  sessionsImportSecureCRT: () => ipcRenderer.invoke('sessions:importSecureCRT'),
 
   // ── Dialogs ──────────────────────────────────────────────────────────────────
   openFile: (opts) => ipcRenderer.invoke('dialog:open-file', opts),

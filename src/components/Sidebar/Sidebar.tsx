@@ -94,6 +94,13 @@ export default function Sidebar() {
     }
   }
 
+  const handleImportSecureCRT = async () => {
+    const result = await api?.sessionsImportSecureCRT()
+    if (result?.sessions) {
+      useStore.getState().importSessions(result.sessions)
+    }
+  }
+
   const closeContext = () => setContextMenu(null)
 
   return (
@@ -136,8 +143,11 @@ export default function Sidebar() {
         <div className="sessions-header">
           <span className="section-label">Sessions</span>
           <div className="sessions-header-actions">
-            <button className="icon-btn" onClick={handleImport} title="Import Sessions">
+            <button className="icon-btn" onClick={handleImport} title="Import JSON">
               <Upload size={12} />
+            </button>
+            <button className="icon-btn" onClick={handleImportSecureCRT} title="Import SecureCRT (.ini)">
+              <FolderOpen size={12} />
             </button>
             <button className="icon-btn" onClick={handleExport} title="Export Sessions">
               <Download size={12} />
