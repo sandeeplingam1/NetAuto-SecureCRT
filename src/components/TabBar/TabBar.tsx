@@ -3,7 +3,13 @@ import { useStore } from '../../store/appStore'
 import './TabBar.css'
 
 export default function TabBar() {
-  const { tabs, activeTabId, setActiveTab, closeTab, addTab, toggleAISidebar, showAISidebar } = useStore()
+  const { tabs, activeTabId, setActiveTab, closeTab, addTab, toggleAISidebar, showAISidebar, setSplitLayout, splitLayout } = useStore()
+
+  function cycleSplit() {
+    if (splitLayout === 'single') setSplitLayout('horizontal')
+    else if (splitLayout === 'horizontal') setSplitLayout('vertical')
+    else setSplitLayout('single')
+  }
 
   return (
     <div className="tabbar">
@@ -42,10 +48,18 @@ export default function TabBar() {
           <span>AI</span>
         </button>
         <div className="tabbar-sep" />
-        <button className="tool-btn" data-tooltip-right="Split View">
+        <button
+          className={`tool-btn ${splitLayout !== 'single' && splitLayout !== 'quad' ? 'active' : ''}`}
+          onClick={cycleSplit}
+          data-tooltip-right={`Split: ${splitLayout} (click to cycle)`}
+        >
           <SplitSquareHorizontal size={14} strokeWidth={1.75} />
         </button>
-        <button className="tool-btn" data-tooltip-right="Tile Sessions">
+        <button
+          className={`tool-btn ${splitLayout === 'quad' ? 'active' : ''}`}
+          onClick={() => setSplitLayout(splitLayout === 'quad' ? 'single' : 'quad')}
+          data-tooltip-right="Quad 4-Pane View"
+        >
           <LayoutGrid size={14} strokeWidth={1.75} />
         </button>
       </div>

@@ -115,13 +115,17 @@ export interface AppState {
   tabs: Tab[]; activeTabId: string | null
   splitLayout: SplitLayout
   broadcastMode: boolean
-  addTab:         (sessionId?: string) => void
-  closeTab:       (id: string) => void
-  setActiveTab:   (id: string) => void
-  updateTab:      (id: string, u: Partial<Tab>) => void
-  appendOutput:   (tabId: string, data: string) => void
-  setSplitLayout: (l: SplitLayout) => void
-  toggleBroadcast:() => void
+  paneActiveTabIds: Record<number, string | null>
+  activePaneIndex: number
+  addTab:            (sessionId?: string) => void
+  closeTab:          (id: string) => void
+  setActiveTab:      (id: string) => void
+  updateTab:         (id: string, u: Partial<Tab>) => void
+  appendOutput:      (tabId: string, data: string) => void
+  setSplitLayout:    (l: SplitLayout) => void
+  toggleBroadcast:   () => void
+  setPaneActiveTab:  (pane: number, tabId: string | null) => void
+  setActivePaneIndex:(pane: number) => void
 
   // Port forwards
   portForwards: PortForward[]
@@ -281,6 +285,8 @@ export const useStore = create<AppState>((set, get) => ({
   // Tabs
   tabs: [], activeTabId: null,
   splitLayout: 'single', broadcastMode: false,
+  paneActiveTabIds: { 0: null, 1: null, 2: null, 3: null },
+  activePaneIndex: 0,
   addTab: (sessionId) => {
     const id    = mkTabId()
     const ptyId = mkPtyId()
@@ -291,12 +297,26 @@ export const useStore = create<AppState>((set, get) => ({
       isConnected: false, isConnecting: false, connectionError: null,
       terminalOutput: [],
     }
-    set(st => ({ tabs: [...st.tabs, tab], activeTabId: id }))
+    set(st => {
+      const paneIdx = st.splitLayout !== 'single' ? st.activePaneIndex : 0
+      return {
+        tabs: [...st.tabs, tab],
+        activeTabId: id,
+        paneActiveTabIds: { ...st.paneActiveTabIds, [paneIdx]: id },
+      }
+    })
   },
   closeTab: (id) => set(st => {
     const tabs      = st.tabs.filter(t => t.id !== id)
     const activeTabId = st.activeTabId === id ? (tabs[tabs.length - 1]?.id || null) : st.activeTabId
-    return { tabs, activeTabId }
+    // Remove closed tab from any pane assignments
+    const paneActiveTabIds = { ...st.paneActiveTabIds }
+    for (const k in paneActiveTabIds) {
+      if (paneActiveTabIds[Number(k)] === id) {
+        paneActiveTabIds[Number(k)] = tabs[0]?.id || null
+      }
+    }
+    return { tabs, activeTabId, paneActiveTabIds }
   }),
   setActiveTab:   (id) => set({ activeTabId: id }),
   updateTab:      (id, u) => set(st => ({ tabs: st.tabs.map(t => t.id === id ? { ...t, ...u } : t) })),
@@ -305,8 +325,20 @@ export const useStore = create<AppState>((set, get) => ({
       ? { ...t, terminalOutput: [...t.terminalOutput.slice(-500), data] }
       : t)
   })),
-  setSplitLayout: (l) => set({ splitLayout: l }),
-  toggleBroadcast:() => set(st => ({ broadcastMode: !st.broadcastMode })),
+  setSplitLayout: (l) => set(st => {
+    // Auto-assign existing tabs to panes when switching layout
+    const paneCount = l === 'quad' ? 4 : l === 'single' ? 1 : 2
+    const paneActiveTabIds = { ...st.paneActiveTabIds }
+    for (let i = 0; i < paneCount; i++) {
+      if (!paneActiveTabIds[i] || !st.tabs.find(t => t.id === paneActiveTabIds[i])) {
+        paneActiveTabIds[i] = st.tabs[i]?.id || null
+      }
+    }
+    return { splitLayout: l, paneActiveTabIds }
+  }),
+  toggleBroadcast:    () => set(st => ({ broadcastMode: !st.broadcastMode })),
+  setPaneActiveTab:   (pane, tabId) => set(st => ({ paneActiveTabIds: { ...st.paneActiveTabIds, [pane]: tabId }, activeTabId: tabId })),
+  setActivePaneIndex: (pane) => set(st => ({ activePaneIndex: pane, activeTabId: st.paneActiveTabIds[pane] || st.activeTabId })),
 
   // Port forwards
   portForwards: [],

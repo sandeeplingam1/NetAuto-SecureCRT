@@ -138,5 +138,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all var(--transition);
 }
 .tool-btn:hover { background: var(--bg-hover); color: var(--text-secondary); }
+.tool-btn.active {
+  background: rgba(59,130,246,0.15);
+  color: var(--accent-blue-3);
+}

@@ -1,33 +1,127 @@
+/* ── Single mode ─────────────────────────────────────────────────────────── */
 .split-single { display: flex; flex: 1; min-height: 0; }
-.split-pane    { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.split-pane    { display: flex; flex-direction: column; min-height: 0; flex: 1; overflow: hidden; }
 .split-pane.hidden { display: none; }
-.split-pane.active { border: 1px solid rgba(59,130,246,0.3); }
 
-.split-container {
-  display: grid;
-  flex: 1;
-  min-height: 0;
-  gap: 2px;
-  background: var(--border);
+/* ── Split pane focus ring ───────────────────────────────────────────────── */
+.split-pane {
+  background: var(--bg-base);
+  position: relative;
+  cursor: default;
+  transition: outline 0.1s ease;
 }
-.split-horizontal { grid-template-columns: 1fr 1fr; }
-.split-vertical   { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr; }
-.split-quad       { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.split-pane.active {
+  outline: 1px solid rgba(59,130,246,0.45);
+  outline-offset: -1px;
+}
 
-.split-pane { background: var(--bg-base); overflow: hidden; position: relative; cursor: default; }
-.split-pane.active { outline: 1px solid rgba(59,130,246,0.4); outline-offset: -1px; }
-.split-pane.empty  { display: flex; align-items: center; justify-content: center; }
-
-.split-pane-label {
+/* ── Pane header / mini tab strip ───────────────────────────────────────── */
+.pane-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  background: var(--bg-elevated);
+  height: 28px;
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border-subtle);
-  font-size: 11px;
-  color: var(--text-muted);
   flex-shrink: 0;
+  padding: 0 4px 0 0;
+  overflow: hidden;
 }
-.split-status { width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
-.split-status.connected { background: var(--accent-green); }
+.pane-tab-strip {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  flex: 1;
+  padding: 0 4px;
+  gap: 1px;
+}
+.pane-tab-strip::-webkit-scrollbar { display: none; }
+.pane-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+.pane-tab:hover { background: var(--bg-hover); color: var(--text-secondary); }
+.pane-tab.active { background: var(--bg-active); color: var(--text-primary); }
+.pane-tab-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.pane-tab-dot.connected { background: var(--accent-green); }
+.pane-tab-label { max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+.pane-add-btn {
+  width: 22px; height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+.pane-add-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* ── Resizable split container ───────────────────────────────────────────── */
+.resizable-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.resizable-split-horizontal { flex-direction: row; }
+.resizable-split-vertical   { flex-direction: column; }
+.resizable-child { display: flex; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; }
+
+/* ── Draggable divider ───────────────────────────────────────────────────── */
+.split-divider {
+  background: var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  z-index: 10;
+}
+.split-divider-horizontal {
+  width: 4px;
+  cursor: col-resize;
+}
+.split-divider-vertical {
+  height: 4px;
+  cursor: row-resize;
+}
+.split-divider:hover, .resizable-split.dragging .split-divider {
+  background: var(--accent-blue-2);
+}
+.split-divider-handle {
+  border-radius: 2px;
+  background: rgba(255,255,255,0.15);
+  transition: background 0.15s, transform 0.15s;
+}
+.split-divider-horizontal .split-divider-handle { width: 2px; height: 24px; }
+.split-divider-vertical   .split-divider-handle { height: 2px; width: 24px; }
+.split-divider:hover .split-divider-handle,
+.resizable-split.dragging .split-divider-handle {
+  background: rgba(255,255,255,0.5);
+  transform: scaleY(1.2);
+}

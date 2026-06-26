@@ -30,6 +30,7 @@ export default function App() {
     setSplitLayout, splitLayout, broadcastMode, toggleBroadcast,
     setHostKeyEvent, setKbInteractive,
     lockSession, isLocked,
+    setActivePaneIndex, activePaneIndex,
   } = useStore()
 
   // ── Subscribe to SSH events from main process ───────────────────────────────
@@ -72,6 +73,17 @@ export default function App() {
       if (meta && e.shiftKey && e.key === '4')   { e.preventDefault(); setSplitLayout('quad') }
       if (meta && e.shiftKey && e.key === '1')   { e.preventDefault(); setSplitLayout('single') }
       if (meta && e.key === 'l')                 { e.preventDefault(); lockSession() }
+      // ⌘[ / ⌘] — cycle focus between panes
+      if (meta && e.key === '[' && splitLayout !== 'single') {
+        e.preventDefault()
+        const paneCount = splitLayout === 'quad' ? 4 : 2
+        setActivePaneIndex((activePaneIndex + paneCount - 1) % paneCount)
+      }
+      if (meta && e.key === ']' && splitLayout !== 'single') {
+        e.preventDefault()
+        const paneCount = splitLayout === 'quad' ? 4 : 2
+        setActivePaneIndex((activePaneIndex + 1) % paneCount)
+      }
 
       // ⌘1–9 tab switching
       if (meta && !e.shiftKey && e.key >= '1' && e.key <= '9') {
@@ -82,7 +94,7 @@ export default function App() {
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
-  }, [tabs, activeTabId, toggleCommandPalette, addTab, closeTab, setActiveView, toggleAISidebar, toggleBroadcast, setSplitLayout, lockSession])
+  }, [tabs, activeTabId, toggleCommandPalette, addTab, closeTab, setActiveView, toggleAISidebar, toggleBroadcast, setSplitLayout, lockSession, splitLayout, activePaneIndex, setActivePaneIndex])
 
   const view = activeView
 
