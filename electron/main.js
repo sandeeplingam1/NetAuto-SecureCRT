@@ -283,8 +283,9 @@ ipcMain.handle('terminal:create-local', async (event, { id, cols = 80, rows = 24
   const shellBin = process.platform === 'win32'
     ? 'powershell.exe'
     : (process.env.SHELL || '/bin/bash')
+  const args = process.platform === 'win32' ? [] : ['-l']
 
-  const term = pty.spawn(shellBin, [], {
+  const term = pty.spawn(shellBin, args, {
     name: 'xterm-256color', cols, rows,
     cwd: os.homedir(),
     env: { ...process.env, TERM: 'xterm-256color', COLORTERM: 'truecolor' },
