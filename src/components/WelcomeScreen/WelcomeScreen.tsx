@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, Terminal, ArrowRight, Zap, Shield, Cpu, GitBranch, Radio, Bot, ChevronRight } from 'lucide-react'
 import { useStore } from '../../store/appStore'
+import Logo from '../Logo/Logo'
 import './WelcomeScreen.css'
 
 const STEPS = [
@@ -64,18 +65,7 @@ export default function WelcomeScreen() {
       {/* ── Hero ── */}
       <div className="welcome-hero">
         <div className="hero-logo">
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-            <rect width="44" height="44" rx="13" fill="url(#hbg)"/>
-            <path d="M10 12 Q22 19 34 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-            <path d="M10 22 Q22 29 34 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.75"/>
-            <path d="M10 32 Q22 39 34 32" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.45"/>
-            <defs>
-              <linearGradient id="hbg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%"   stopColor="#2563eb"/>
-                <stop offset="100%" stopColor="#7c3aed"/>
-              </linearGradient>
-            </defs>
-          </svg>
+          <Logo size={44} />
         </div>
         <h1 className="hero-title">Welcome to Helix</h1>
         <p className="hero-sub">The AI-powered network terminal built for engineers who move fast.</p>

@@ -6,6 +6,7 @@ import {
   ArrowRight, Zap, Shield, GitBranch, Upload, Download
 } from 'lucide-react'
 import { useStore, Session, EnvTag } from '../../store/appStore'
+import Logo from '../Logo/Logo'
 import './Sidebar.css'
 
 const ENV_COLORS: Record<EnvTag, string> = {
@@ -108,17 +109,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="logo-mark">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M3 3.5 Q9 7 15 3.5"  stroke="url(#lg)" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
-            <path d="M3 8.5 Q9 12 15 8.5"  stroke="url(#lg)" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.8"/>
-            <path d="M3 13.5 Q9 17 15 13.5" stroke="url(#lg)" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.5"/>
-            <defs>
-              <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stopColor="#3b82f6"/>
-                <stop offset="100%" stopColor="#7c3aed"/>
-              </linearGradient>
-            </defs>
-          </svg>
+          <Logo size={18} />
         </div>
         <span className="logo-text">Helix</span>
       </div>
