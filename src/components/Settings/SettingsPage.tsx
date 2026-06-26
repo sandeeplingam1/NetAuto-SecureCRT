@@ -3,11 +3,11 @@ import { Bot, Terminal, Shield, Keyboard, Info, Highlighter, Lock, Plus, Trash2,
 import { useStore, AIProvider, HighlightRule } from '../../store/appStore'
 import './SettingsPage.css'
 
-const PROVIDERS: { id: AIProvider; name: string; icon: string; models: string[]; keyLabel: string; hasBaseUrl?: boolean }[] = [
-  { id: 'openai',    name: 'OpenAI',         icon: '🟢', models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],                               keyLabel: 'API Key (sk-...)' },
-  { id: 'anthropic', name: 'Anthropic',       icon: '🟠', models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],    keyLabel: 'API Key (sk-ant-...)' },
-  { id: 'google',    name: 'Google Gemini',   icon: '🔵', models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'],                               keyLabel: 'API Key (AIza...)' },
-  { id: 'ollama',    name: 'Ollama (Local)',  icon: '⚫', models: ['llama3', 'llama3.1', 'mistral', 'qwen2.5', 'phi3', 'codellama', 'deepseek-r1'],         keyLabel: 'Not required (local)', hasBaseUrl: true },
+const PROVIDERS: { id: AIProvider; name: string; icon: any; models: string[]; keyLabel: string; hasBaseUrl?: boolean }[] = [
+  { id: 'openai',    name: 'OpenAI',         icon: Bot, models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],                               keyLabel: 'API Key (sk-...)' },
+  { id: 'anthropic', name: 'Anthropic',       icon: Bot, models: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],    keyLabel: 'API Key (sk-ant-...)' },
+  { id: 'google',    name: 'Google Gemini',   icon: Bot, models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash'],                               keyLabel: 'API Key (AIza...)' },
+  { id: 'ollama',    name: 'Ollama (Local)',  icon: Bot, models: ['llama3', 'llama3.1', 'mistral', 'qwen2.5', 'phi3', 'codellama', 'deepseek-r1'],         keyLabel: 'Not required (local)', hasBaseUrl: true },
 ]
 
 const FONT_FAMILIES = ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Monaco', 'Courier New', 'Consolas']
@@ -74,7 +74,7 @@ export default function SettingsPage() {
                   <button key={p.id}
                     className={`provider-card ${aiSettings.provider === p.id ? 'active' : ''}`}
                     onClick={() => updateAISettings({ provider: p.id })}>
-                    <span className="provider-icon">{p.icon}</span>
+                    <span className="provider-icon"><p.icon size={16} /></span>
                     <span className="provider-name">{p.name}</span>
                     {aiSettings.provider === p.id && <span className="provider-check">✓</span>}
                   </button>
@@ -139,10 +139,10 @@ export default function SettingsPage() {
             <div className="settings-card links-card">
               <div className="settings-label">Get API Keys</div>
               <div className="provider-links">
-                <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer">🟢 OpenAI Platform →</a>
-                <a href="https://console.anthropic.com" target="_blank" rel="noreferrer">🟠 Anthropic Console →</a>
-                <a href="https://aistudio.google.com" target="_blank" rel="noreferrer">🔵 Google AI Studio →</a>
-                <a href="https://ollama.com" target="_blank" rel="noreferrer">⚫ Ollama (local) →</a>
+                <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer">OpenAI Platform →</a>
+                <a href="https://console.anthropic.com" target="_blank" rel="noreferrer">Anthropic Console →</a>
+                <a href="https://aistudio.google.com" target="_blank" rel="noreferrer">Google AI Studio →</a>
+                <a href="https://ollama.com" target="_blank" rel="noreferrer">Ollama (local) →</a>
               </div>
             </div>
           </div>

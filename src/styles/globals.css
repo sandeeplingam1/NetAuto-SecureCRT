@@ -121,6 +121,16 @@ input:focus, textarea:focus, select:focus {
 input::placeholder { color: var(--text-muted); }
 select option { background: var(--bg-elevated); color: var(--text-primary); }
 
+input[type="checkbox"], input[type="radio"] {
+  width: auto;
+  padding: 0;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
 /* ── Utilities ───────────────────────────────────────────────────────────── */
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
