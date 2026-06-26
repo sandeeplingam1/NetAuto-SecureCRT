@@ -74,11 +74,11 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
           <span className="msg-time">{timeStr(msg.timestamp)}</span>
           {!isUser && msg.content && !msg.isLoading && (
             <div className="msg-actions">
-              <button className="msg-act-btn" onClick={copyText} title="Copy">
+              <button className="msg-act-btn" onClick={copyText} data-tooltip="Copy">
                 {copied ? <Check size={10} /> : <Copy size={10} />}
               </button>
               {canInsert && (
-                <button className="msg-act-btn insert" onClick={insertToTerminal} title="Insert command to terminal">
+                <button className="msg-act-btn insert" onClick={insertToTerminal} data-tooltip="Insert command to terminal">
                   <CornerDownLeft size={10} />
                 </button>
               )}
@@ -264,13 +264,13 @@ ${termCtx ? `\nCurrent terminal output context:\n\`\`\`\n${termCtx}\n\`\`\`` : '
         </div>
         <div className="ai-actions">
           {termCtx && (
-            <div className="ctx-pill" title={`Sending last ${aiSettings.contextLines} terminal lines as context`}>
+            <div className="ctx-pill" data-tooltip={`Sending last ${aiSettings.contextLines} terminal lines as context`}>
               <span className="ctx-dot" />
               ctx
             </div>
           )}
-          <button className="icon-btn" onClick={clearChat} title="Clear chat"><Trash2 size={13} /></button>
-          <button className="icon-btn" onClick={() => setActiveView('settings')} title="AI Settings"><Settings size={13} /></button>
+          <button className="icon-btn" onClick={clearChat} data-tooltip="Clear chat"><Trash2 size={13} /></button>
+          <button className="icon-btn" onClick={() => setActiveView('settings')} data-tooltip="AI Settings"><Settings size={13} /></button>
         </div>
       </div>
 

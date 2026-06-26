@@ -267,23 +267,22 @@ export default function TerminalPane({ tab }: Props) {
               <span className="error-text" title={tab.connectionError}>Error: {tab.connectionError.slice(0, 40)}</span>
             )}
             <div className="bar-actions">
-              <button className="bar-btn" title="Search (⌘F)" onClick={() => setShowSearch(s => !s)}>
+              <button className="bar-btn" data-tooltip="Search (⌘F)" onClick={() => setShowSearch(s => !s)}>
                 <Search size={12} />
               </button>
               <button
                 className={`bar-btn ${tab.logPath ? 'active' : ''}`}
-                title={tab.logPath ? `Logging: ${tab.logPath}` : 'Start Session Log'}
+                data-tooltip={tab.logPath ? `Logging: ${tab.logPath}` : 'Start Session Log'}
                 onClick={toggleLog}
               >
                 <FileText size={12} />
               </button>
-              <button className="bar-btn" title="SFTP Browser" onClick={() => useStore.getState().setActiveView('sftp')}>
+              <button className="bar-btn" data-tooltip="SFTP Browser" onClick={() => useStore.getState().setActiveView('sftp')}>
                 <FolderOpen size={12} />
               </button>
-              {tab.isConnected
-                ? <button className="bar-btn danger" title="Disconnect" onClick={disconnect}><WifiOff size={12} /></button>
-                : <button className="bar-btn" title="Reconnect" onClick={connect}><Wifi size={12} /></button>
-              }
+              {tab.isConnected 
+                ? <button className="bar-btn danger" data-tooltip="Disconnect" onClick={disconnect}><WifiOff size={12} /></button>
+                : <button className="bar-btn" data-tooltip="Reconnect" onClick={connect}><Wifi size={12} /></button>}
             </div>
           </div>
         </div>

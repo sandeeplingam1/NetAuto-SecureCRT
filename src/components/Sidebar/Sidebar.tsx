@@ -143,16 +143,16 @@ export default function Sidebar() {
         <div className="sessions-header">
           <span className="section-label">Sessions</span>
           <div className="sessions-header-actions">
-            <button className="icon-btn" onClick={handleImport} title="Import JSON">
+            <button className="icon-btn" onClick={handleImport} data-tooltip="Import JSON">
               <Upload size={12} />
             </button>
-            <button className="icon-btn" onClick={handleImportSecureCRT} title="Import SecureCRT (.ini)">
+            <button className="icon-btn" onClick={handleImportSecureCRT} data-tooltip="Import SecureCRT (.ini)">
               <FolderOpen size={12} />
             </button>
-            <button className="icon-btn" onClick={handleExport} title="Export Sessions">
+            <button className="icon-btn" onClick={handleExport} data-tooltip="Export Sessions">
               <Download size={12} />
             </button>
-            <button className="icon-btn" onClick={() => setShowNewSessionModal(true)} title="New Session">
+            <button className="icon-btn" onClick={() => setShowNewSessionModal(true)} data-tooltip="New Session">
               <Plus size={14} />
             </button>
           </div>
